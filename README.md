@@ -12,4 +12,4 @@ as female (0 = yes).
 * Eth - Ethnicity.
 * Highest Ed - Highest level of study
   
-[Diagram Title](2225363-2.html)
+[Link Text](2225363-2.html)
