@@ -11,7 +11,6 @@ as female (0 = yes).
 * H8 - A binary variable signaling the response to question H8 on the census "Are all the rooms in this accommodation, including the kitchen, bathroom and toilet,behind a door that only this household can use?"; 1=no, 0=yes.
 * Eth - Ethnicity.
 * Highest Ed - Highest level of study
-  
-[Link Text](https://drive.google.com/file/d/15109MFloFdyS81wYu4Quixrg0NKMMUIA/view?usp=drive_link/2225363-2.html)
-https://drive.google.com/drive/folders/1U5-hF56ZoJ0UY2_FuhL9xDOJTeXO0ZDB
-[Link Text](https://drive.google.com/file/d/1k27JOGgfLj5Uf4Jj-ZGolSA-dJ4jfhPc/view?usp=drive_link)
+
+  Click link to view completed project Report
+[Link Text](https://princebunkcy.github.io/webb/2225363-2.html)
