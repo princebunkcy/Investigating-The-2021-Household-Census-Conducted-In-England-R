@@ -14,5 +14,3 @@ as female (0 = yes).
 
   Click link to view completed project Report
 [Link Text](https://princebunkcy.github.io/R-Investigating-The-2021-Household-Census-Conducted-In-England/2225363-2.html)
-
-https://princebunkcy.github.io/R-Investigating-The-2021-Household-Census-Conducted-In-England/
