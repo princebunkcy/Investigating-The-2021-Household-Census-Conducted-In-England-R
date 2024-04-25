@@ -1,0 +1,117 @@
+---
+title: "Investigating The 2021 Household Census Conducted In England"
+author: "Prince Onuekwa(2225363)"
+date: "2023-11-10"
+format:
+  html:
+    metadata:
+      description: "This is a modified data snapshot from houehold 2021 census in England"
+      keywords: "Census, England, 2021"
+    social: true
+    socialButtons: true
+    highlight: "github"
+    code-fold: true
+    code-link: true
+    embed-resources: true
+    toc: true
+    toc_depth: 2
+    theme: cosmo
+    number-sections: true
+bibliography: references.bib
+---
+
+```{r}
+#| label: loading packaging 
+#| include: false
+library(tidyverse)
+library(ggplot2)
+library(ggthemes)
+library(dplyr)
+```
+
+```{r}
+#| label: loading data
+#| include: false
+data_1 <- read_csv("C:/Users/Hp 2022/Downloads/data-1.csv")
+```
+
+# **Introduction**
+
+In the UK census is carried out every 10 years by the office of the National statistic to have snapshots of the society to simplify the planning of education, roads , healthcare etc.( [visit](https://www.ons.gov.uk/census/aboutcensus/aboutthecensus#:~:text=The%20census%20is%20undertaken%20by,detailed%20snapshot%20of%20our%20society) to read more )
+
+In this work , we would highlight different features and investigate how they relate to one another based on a modified snapshot of data collected during 2021 household census conducted in England.This article will be making use of [@tidyverse]**`tidyverse`** packages such as [@readr]**`readr`** , [@ggplot2]**`ggplots`**, [@dplyr]**`dplyr`** [@ggthemes] **`ggthemes`** to produce appropriate visuals and interpret insights from the data set. For more knowledge on tidyverse, I recommend R for Data Science( [Wickham, Hadley, and Garrett Grolemund. 2017](https://r4ds.had.co.nz/))
+
+# The Data
+
+The data was collected from people living in different households in England 2021 and it contains different **variables** but our main concern for this article will be focused on the `Age`, `Marital_Status`, `Females`, `Highest Ed` and `Income`. The below table shows the first 7 rows of the data set where `Age` denotes ages of people in `dbl` , `Marital_status` refers to marital status which is either `Married`, `Divorced`, `Single` , `Windowed` or `Separated` in `chr` , `Females` which indicates whether or not the individual has identified as female (`0` = yes, `1`= No) in `dbl`, `Eth` for Ethnicity which consists of `Asian` , `Black`, `White`, `Hispanic`, `Other` in `chr` and `Highest Ed` which refers to the highest education level that consists of `Bachelor Degree,` `Masters or higher`, `Secondary School` , `Some HE` means some extent of higher education and `Less than Secondary School` means education lower than secondary school .
+
+```{r echo=FALSE}
+df <- data_1 %>%
+na.omit() %>%
+  select(-ID, -Person_ID, -H8)
+```
+
+```{r warning=FALSE,echo=FALSE,fig.cap="Data Preview"}
+new_names <- names(df)
+new_names[c(0, 1,2,3,4)] <- c("Age","Marital_Status","Income", "Females","Ethnicity")
+names(df) <- new_names
+knitr::kable(head(df, n = 7), format = "markdown")
+```
+
+# **Investigation**
+
+## Heatmap of Age, Income and Females
+
+[**A correlation heatmap**](https://medium.com/5-minute-eda/5-minute-eda-correlation-heatmap-b57bbb7bae14) is a visual representation used to show correlation between variables and it's one of the important pre processing steps in building a model.With the aid of the [@ggplot2-2]**`ggplot`** and [`cor()`](https://cran.r-project.org/web/packages/corrr/vignettes/using-corrr.html#:~:text=corrr%20is%20a%20package%20for%20exploring%20corr%20elations,in%20terms%20of%20the%20strength%20of%20the%20correlations.) function. Figure 1.1 shows different shades of colors as red signifies high correlation , blue indicates low correlation and white signifies mid correlation . A model with -1 signifies zero correlation and 1 signifies a perfect correlation. It was found that `Age` has mid correlation with `Income` and `Females` which is not necessarily a strong linear relationship but can be considered as features when building predictive models.
+
+```{r warning=FALSE,echo=FALSE,fig.cap="Figure 1.1: Heatmap of Age,Income and females"}
+H <- df[,c(1,3,4)]
+cor_matrix <- cor(H)
+ggplot(data = reshape2::melt(cor_matrix), aes(Var1, Var2, fill = value)) +
+    geom_tile(color = "white") +
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0, limit = c(-1, 1), space = "Lab", name="Correlation") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1))
+
+```
+
+## Income , Marital Status and Ethnicity
+
+[**Violin plots**](https://en.wikipedia.org/wiki/Violin_plot) can be considered as [boxplot](https://en.wikipedia.org/wiki/Box_plot) and [kernel density](https://en.wikipedia.org/wiki/Kernel_density_estimation) , although it shows probability density of the data at different points .Figure 2 represents violin plot of `Income` ,`Marital Status` and `Eth` visualized with [@ggplot2-2]**`ggplot`**, [`geom_violin()`](https://ggplot2.tidyverse.org/reference/geom_violin.html?q=geom_viol#null) and [`aes()`](https://ggplot2.tidyverse.org/reference/) for calling columns. During the 2021 census in England, it was discovered that `Married` households with `Ethnicity` of `Black` had the highest annual income compared to the households who were `Separated` with `Ethnicity` of `Hispanic` discovered to be the lowest. With this we can observe how `Income` varies across different `Marital Status` and `Ethnicity` .
+
+```{r warning=FALSE,echo=FALSE, fig.cap="Figure 1.2: Violin plot of Income, Marital status and Ethnicity"}
+ggplot(df, aes(x = Marital_Status, y = Income, fill = Eth)) +
+    geom_violin() +scale_y_continuous(labels = scales::comma)+
+    labs(x = "Marital Status",
+         y = "Income",
+         fill = "Eth")
+
+
+```
+
+## Scatter Plot of Ethnicity,Age and Income
+
+**Scatter plot** is sometimes used to draw a prediction or a correlation relationship between variables but for this case we would be introducing a third [**categorical variable**](https://en.wikipedia.org/wiki/Categorical_variable) , `Ethnicity` to two [**numeric variable**](https://www150.statcan.gc.ca/n1/edu/power-pouvoir/ch8/5214817-eng.htm) `Income` and `Age` to indicate where each data point meets .Figure 1.3 shows a [Scatter plot](https://en.wikipedia.org/wiki/Scatter_plot) conducted in [@ggplot2]**`ggplot2`** with the aid of a function [**`geom_point()`**](https://plotly.com/ggplot2/geom_point/) to show how `Ethnicity` varies across `Income` and `Age` of the households recorded during the census. `White` people was seen to dominate the chart with the youngest and oldest people recorded while `Black` people was seen to have the highest `Income`.
+
+```{r warning=FALSE,echo=FALSE, fig.cap="Figure 1.3: Scatter plot of Age, Income and Ethnicity"}
+ggplot(df, aes(x = Age, y = Income, color = Eth)) +
+    geom_point() + scale_y_continuous(labels = scales::comma)
+```
+
+## Distribution of Age Across Ethnicity And Highest Education
+
+The [Bar chart](https://en.wikipedia.org/wiki/Bar_chart) in figure 1.4 below was used to show distribution of `Age` across `Ethnicity` and `Highest Education` .This Bar chart was plotted with the `geom_col()` function and it shows that most `white` people in their late 80's `Highest Education` was `Secondary school` , majority of the `Asians` and `Blacks` in their late 20's has `Highest Education` `Less than secondary school.`
+
+```{r warning=FALSE,echo=FALSE, fig.cap="Figure 1.4: Bar chart of Age, Highest Education and Ethnicity"}
+df$`Highest Ed` <- factor(df$`Highest Ed`, levels = c("Less than Secondary School", "Some HE", "Secondary School", "Bachelors Degree", "Masters or higher"))
+
+ggplot(df, aes(y = interaction(Eth,`Highest Ed`, sep = "_"), x = Age, fill = Eth )) + 
+  geom_col() +
+  scale_y_discrete (labels = function(x) gsub("_", " - ", x))+labs(y = NULL)
+```
+
+# Conclusion
+
+From the concluded investigation ,It is fair to say that [@tidyverse]**`tidyverse`** and [@ggplot2]**`ggplot`** are essential packages used for visualizing the relationships between variables.we can summarise from the investigation carried out that `Ethnicity` and `Age` clarifies the distributions across other features recorded in the dataset .
+
+### References
