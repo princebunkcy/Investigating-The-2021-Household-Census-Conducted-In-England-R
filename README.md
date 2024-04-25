@@ -10,6 +10,6 @@ In this project , i will be developing an overview  ggplot based visual investig
 as female (0 = yes).
 * H8 - A binary variable signaling the response to question H8 on the census "Are all the rooms in this accommodation, including the kitchen, bathroom and toilet,behind a door that only this household can use?"; 1=no, 0=yes.
 * Eth - Ethnicity.
-* Highest Ed - Highest level of study.
-
-[view Quarto Document] (2225363-2.html)
+* Highest Ed - Highest level of study
+  
+[Diagram Title](2225363-2.html)
